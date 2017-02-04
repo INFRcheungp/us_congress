@@ -3,14 +3,17 @@ import os
 from urllib.request import urlopen
 # import ssl
 # import requests
+import configparser
+
+config = configparser.ConfigParser()
 
 # TODO: Eventually, you should move these to a config file or something. Call it 'data_sources.cfg' or something like that.
 senate_xml_location = 'https://www.gpo.gov/fdsys/bulkdata/BILLS/115/1/s/BILLS-115s106is.xml'
 
 # Source: https://www.federalregister.gov/developers/api/v1
-federal_register_api = "https://www.federalregister.gov/api/v1"
+federal_register_api = "https://www.federalregister.gov/api/v1/"
 # Search all Federal Register documents published since 1994.
-federal_register_documents_resource = "/documents."
+federal_register_documents_resource = "documents"
 federal_register_documents_formats = ["json", "csv"]
 federal_register_documents_fields = ["abstract", "action", "agencies", "agency_names", "body_html_url", "crf_refences", "citation", "comment_url", "comments_close_on", "correction_of", "corrections", "dates", "docket_id", "docket_ids", "document_number", "effective_on", "end_page", "excerpts", "executive_order_notes", "executive_order_number", "full_text_xml_url", "html_url", "images", "json_url", "mods_url", "page_length", "pdf_url", "president", "public_inspection_pdf_url", "publication_date", "raw_text_url", "regulation_id_number_info", "regulation_id_numbers", "regulations_dot_gov_info", "regulations_dot_gov_url", "significant", "signing_date", "start_page", "subtype", "title", "toc_doc", "toc_subject", "topics", "type", "volume"]
 federal_register_documents_per_page = "20"
@@ -20,7 +23,7 @@ federal_register_documents_order = ["relevance", "newest", "oldest", "executive_
 federal_register_agencies_resource = "/agencies"
 
 doc_format = "json"
-executive_orders_source = federal_register_api + federal_register_documents_resource + "json" + "?order=" + "newest" + "&presidential_document_type=" + "executive_order&=" + "donald-trump"
+executive_orders_source = federal_register_api + federal_register_documents_resource + ".json" + "?order=" + "newest" + "&presidential_document_type=" + "executive_order&=" + "donald-trump"
 print("EXEC STRING:\t\t", executive_orders_source)
 
 executive_xml_location = ''
@@ -30,13 +33,11 @@ chamber = ['house', 'senate']
 # https://github.com/usgpo/bulk-data/blob/master/Bills-Summary-XML-User-Guide.md
 house_bills = [{"bill" : "hr"}, {"joint_resolution" : "hjres"}, {"concurrent_resolution" : "hconres"}]
 senate_bills = [{"bill" : "s", "joint_resolution" : "sjres", "concurrent_resolution" : "sconres" }] 
-measure_type = ['hr', 'sres']
-# xml_location = "https://www.gpo.gov"
-bills = []
-# tree = ET.ElementTree(file='work.xml')
 
 
-# ignoreElems = ['displayNameKey', 'displayName']
+'''
+	Gets JSON data from the federal register API
+'''
 def get_json_data(json_path):
 	f = urlopen(json_path)
 	r = f.read()
